@@ -1,82 +1,28 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Quét mã QR & Mã vạch</title>
-  <!-- Import thư viện html5-qrcode -->
-  <script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 20px;
-    }
-    /* Khung camera cố định */
-    #reader {
-      width: 300px;
-      height: 300px;
-      margin: auto;
-      border: 2px solid #ddd;
-    }
-    .result-box {
-      width: 80%;
-      padding: 10px;
-      font-size: 16px;
-      margin: 10px auto;
-      display: block;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quét QR & Barcode</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h2>Quét mã QR & Mã vạch</h2>
-  <!-- Khung hiển thị video camera -->
-  <div id="reader"></div>
-  <!-- 2 ô textbox để hiển thị loại tem và nội dung tem -->
-  <input type="text" id="stampType" class="result-box" placeholder="Loại tem">
-  <input type="text" id="stampContent" class="result-box" placeholder="Nội dung tem">
+    <h1>Quét QR & Barcode</h1>
 
-  <script>
-    // Khởi tạo đối tượng Html5Qrcode với id container là "reader"
-    const html5QrCode = new Html5Qrcode("reader");
+    <video id="camera" autoplay playsinline></video>
+    <canvas id="qr-canvas"></canvas>
 
-    // Cấu hình: fps và kích thước khung quét (qrbox)
-    const config = { fps: 10, qrbox: 300 };
+    <div class="input-container">
+        <label>Loại tem:</label>
+        <input type="text" id="temType" readonly>
+        <label>Nội dung tem:</label>
+        <input type="text" id="temContent" readonly>
+    </div>
 
-    // Callback khi quét thành công mã QR/mã vạch
-    function onScanSuccess(decodedText, decodedResult) {
-      console.log(`Đã quét: ${decodedText}`);
-      // Giả định rằng kết quả có định dạng "type:content"
-      let type = "Không xác định";
-      let content = decodedText;
-      if(decodedText.includes(":")){
-        let parts = decodedText.split(":");
-        type = parts[0].trim();
-        content = parts.slice(1).join(":").trim();
-      }
-      // In kết quả vào 2 textbox
-      document.getElementById("stampType").value = type;
-      document.getElementById("stampContent").value = content;
-      // Không dừng camera, tiếp tục quét
-    }
+    <button id="startBtn">Bắt đầu quét</button>
 
-    // Callback khi quét không thành công (có thể bỏ qua hoặc dùng để debug)
-    function onScanFailure(error) {
-      // Chỉ log lỗi quét, không cần thông báo cho người dùng
-      console.warn(`Không phát hiện mã: ${error}`);
-    }
-
-    // Tự động mở camera khi trang được tải
-    window.addEventListener('load', () => {
-      html5QrCode.start(
-        { facingMode: "environment" }, // Sử dụng camera sau
-        config,
-        onScanSuccess,
-        onScanFailure
-      ).catch(err => {
-        console.error(`Lỗi khi mở camera: ${err}`);
-      });
-    });
-  </script>
+    <script src="jsQR.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

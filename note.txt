@@ -1,0 +1,8 @@
+viết cho tôi 1 trang web sử dụng html css và javascript (chia các file riêng biệt), có thể sử dụng tư viện ngoài để chức năng tương tự quét qr zalo
+nhận diện thiết bị đang đăng nhập web là điện thoại hay máy tính để css và js
+khung camera cố định
+textbox loại tem
+textbox nội dung tem
+fuction start_camera
+tự động yêu cầu quyền truy cập camera điện thoại hoặc laptop và mở camera để quét mã qr và barcode
+vẫn tiếp tục quét khi quét được qr hoặc code, ghi kết quả loại tem và nội dung tem và 2 ô textbox ở trên
