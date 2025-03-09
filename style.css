@@ -46,3 +46,7 @@ button {
 button:hover {
     background-color: #218838;
 }
+.highlight {
+    background-color: #90ee90; /* Màu xanh lá nhạt */
+    transition: background-color 0.5s ease;
+}
