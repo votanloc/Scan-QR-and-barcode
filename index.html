@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
@@ -18,11 +18,36 @@
         <label>Nội dung tem:</label>
         <input type="text" id="temContent" readonly>
     </div>
-
+    <svg id="barcode"></svg>
     <button id="startBtn">Bắt đầu quét</button>
 
     <script src="jsQR.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quét QR & Barcode</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quagga/0.12.1/quagga.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.0/dist/JsBarcode.all.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Quét QR & Barcode</h1>
+    <div id="camera-container">
+        <video id="video" playsinline></video>
+    </div>
+    <input type="text" id="temType" placeholder="Loại tem" readonly>
+    <input type="text" id="temContent" placeholder="Nội dung tem" readonly>
+    <svg id="barcode"></svg>
+    <br>
+    <button onclick="startCamera()">Bắt đầu quét</button>
     <script src="script.js"></script>
 </body>
 </html>
