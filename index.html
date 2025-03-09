@@ -1,24 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR & Barcode Scanner</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Quét mã QR & Mã vạch</title>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+        #reader {
+            width: 100%;
+            max-width: 400px;
+            margin: auto;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <h1>QR & Barcode Scanner</h1>
-        <video id="preview" class="scanner-preview"></video>
-        <button id="startCamera">Mở Camera</button>
-        <div class="output">
-            <label>Loại Tem:</label>
-            <input type="text" id="labelType" readonly>
-            <label>Nội Dung Tem:</label>
-            <input type="text" id="labelContent" readonly>
-        </div>
-    </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/instascan/1.0.0/instascan.min.js"></script>
-    <script src="script.js"></script>
+
+    <h2>Quét mã QR & Mã vạch</h2>
+    <div id="reader"></div>
+    <input type="text" id="result" placeholder="Kết quả quét sẽ hiển thị ở đây">
+    <br>
+    <button onclick="startScanner()">Bắt đầu quét</button>
+    <button onclick="stopScanner()">Dừng quét</button>
+
+    <script>
+        let scanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: 250 });
+
+        function startScanner() {
+            scanner.render(success, error);
+        }
+
+        function stopScanner() {
+            scanner.clear();
+        }
+
+        function success(decodedText, decodedResult) {
+            document.getElementById("result").value = decodedText;
+            stopScanner();
+        }
+
+        function error(err) {
+            console.warn(err);
+        }
+    </script>
+
 </body>
 </html>
