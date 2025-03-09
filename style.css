@@ -88,8 +88,8 @@ input {
 }
 
 .highlight {
-    background-color: #90ee90;
-    transition: background-color 0.5s ease;
+    background-color: #07f807;
+    transition: background-color 1s ease;
 }
 
 button {

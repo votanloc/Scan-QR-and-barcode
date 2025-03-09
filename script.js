@@ -184,5 +184,5 @@ function showBarcode(text) {
 // Hiệu ứng nhấp nháy xanh
 function flashHighlight(element) {
     element.classList.add("highlight");
-    setTimeout(() => element.classList.remove("highlight"), 500);
+    setTimeout(() => element.classList.remove("highlight"), 1000);
 }
