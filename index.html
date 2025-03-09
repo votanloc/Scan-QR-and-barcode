@@ -61,6 +61,21 @@
         button:hover {
             background-color: #0056b3;
         }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+
+            .scanner-preview {
+                height: 200px;
+            }
+
+            button {
+                padding: 8px 12px;
+                font-size: 14px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -74,29 +89,45 @@
         <button id="capture">Chụp Ảnh</button>
     </div>
 
+    <script src="https://unpkg.com/@zxing/library@latest"></script>
     <script>
         let videoStream = null;
 
         document.getElementById('startCamera').addEventListener('click', async () => {
             const video = document.getElementById('camera');
+            const canvas = document.getElementById('snapshot');
+            const context = canvas.getContext('2d');
             try {
                 videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
                 video.srcObject = videoStream;
+                video.onloadedmetadata = () => {
+                    video.play();
+                    requestAnimationFrame(updateCanvas);
+                };
             } catch (error) {
                 console.error('Lỗi mở camera:', error);
-                alert('Không thể truy cập camera!');
+                alert('Không thể truy cập camera! Vui lòng kiểm tra quyền truy cập và thử lại.');
+            }
+
+            function updateCanvas() {
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                }
+                requestAnimationFrame(updateCanvas);
             }
         });
 
         document.getElementById('capture').addEventListener('click', () => {
-            const video = document.getElementById('camera');
             const canvas = document.getElementById('snapshot');
-            const context = canvas.getContext('2d');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            canvas.style.display = 'block';
-            video.style.display = 'none';
+            const codeReader = new ZXing.BrowserMultiFormatReader();
+            codeReader.decodeFromImage(canvas).then(result => {
+                alert(`Kết quả: ${result.text}`);
+            }).catch(err => {
+                console.error(err);
+                alert('Không thể quét mã! Vui lòng thử lại.');
+            });
         });
     </script>
 </body>
