@@ -1,134 +1,82 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR & Barcode Scanner</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-
-        .container {
-            text-align: center;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-        }
-
-        h1 {
-            color: #333;
-        }
-
-        .scanner-preview {
-            width: 100%;
-            height: 300px;
-            margin: 20px 0;
-            border: 1px solid #ddd;
-            position: relative;
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-        }
-
-        canvas {
-            display: none;
-        }
-
-        button {
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            margin: 10px 0;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        @media (max-width: 600px) {
-            .container {
-                padding: 10px;
-            }
-
-            .scanner-preview {
-                height: 200px;
-            }
-
-            button {
-                padding: 8px 12px;
-                font-size: 14px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quét mã QR & Mã vạch</title>
+  <!-- Import thư viện html5-qrcode -->
+  <script src="https://unpkg.com/html5-qrcode@2.3.7/minified/html5-qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    /* Khung camera cố định */
+    #reader {
+      width: 300px;
+      height: 300px;
+      margin: auto;
+      border: 2px solid #ddd;
+    }
+    .result-box {
+      width: 80%;
+      padding: 10px;
+      font-size: 16px;
+      margin: 10px auto;
+      display: block;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>QR & Barcode Scanner</h1>
-        <div class="scanner-preview">
-            <video id="camera" autoplay></video>
-            <canvas id="snapshot"></canvas>
-        </div>
-        <button id="startCamera">Mở Camera</button>
-        <button id="capture">Chụp Ảnh</button>
-    </div>
+  <h2>Quét mã QR & Mã vạch</h2>
+  <!-- Khung hiển thị video camera -->
+  <div id="reader"></div>
+  <!-- 2 ô textbox để hiển thị loại tem và nội dung tem -->
+  <input type="text" id="stampType" class="result-box" placeholder="Loại tem">
+  <input type="text" id="stampContent" class="result-box" placeholder="Nội dung tem">
 
-    <script src="https://unpkg.com/@zxing/library@latest"></script>
-    <script>
-        let videoStream = null;
+  <script>
+    // Khởi tạo đối tượng Html5Qrcode với id container là "reader"
+    const html5QrCode = new Html5Qrcode("reader");
 
-        document.getElementById('startCamera').addEventListener('click', async () => {
-            const video = document.getElementById('camera');
-            const canvas = document.getElementById('snapshot');
-            const context = canvas.getContext('2d');
-            try {
-                videoStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-                video.srcObject = videoStream;
-                video.onloadedmetadata = () => {
-                    video.play();
-                    requestAnimationFrame(updateCanvas);
-                };
-            } catch (error) {
-                console.error('Lỗi mở camera:', error);
-                alert('Không thể truy cập camera! Vui lòng kiểm tra quyền truy cập và thử lại.');
-            }
+    // Cấu hình: fps và kích thước khung quét (qrbox)
+    const config = { fps: 10, qrbox: 300 };
 
-            function updateCanvas() {
-                if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-                    context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                }
-                requestAnimationFrame(updateCanvas);
-            }
-        });
+    // Callback khi quét thành công mã QR/mã vạch
+    function onScanSuccess(decodedText, decodedResult) {
+      console.log(`Đã quét: ${decodedText}`);
+      // Giả định rằng kết quả có định dạng "type:content"
+      let type = "Không xác định";
+      let content = decodedText;
+      if(decodedText.includes(":")){
+        let parts = decodedText.split(":");
+        type = parts[0].trim();
+        content = parts.slice(1).join(":").trim();
+      }
+      // In kết quả vào 2 textbox
+      document.getElementById("stampType").value = type;
+      document.getElementById("stampContent").value = content;
+      // Không dừng camera, tiếp tục quét
+    }
 
-        document.getElementById('capture').addEventListener('click', () => {
-            const canvas = document.getElementById('snapshot');
-            const codeReader = new ZXing.BrowserMultiFormatReader();
-            codeReader.decodeFromImage(canvas).then(result => {
-                alert(`Kết quả: ${result.text}`);
-            }).catch(err => {
-                console.error(err);
-                alert('Không thể quét mã! Vui lòng thử lại.');
-            });
-        });
-    </script>
+    // Callback khi quét không thành công (có thể bỏ qua hoặc dùng để debug)
+    function onScanFailure(error) {
+      // Chỉ log lỗi quét, không cần thông báo cho người dùng
+      console.warn(`Không phát hiện mã: ${error}`);
+    }
+
+    // Tự động mở camera khi trang được tải
+    window.addEventListener('load', () => {
+      html5QrCode.start(
+        { facingMode: "environment" }, // Sử dụng camera sau
+        config,
+        onScanSuccess,
+        onScanFailure
+      ).catch(err => {
+        console.error(`Lỗi khi mở camera: ${err}`);
+      });
+    });
+  </script>
 </body>
 </html>
