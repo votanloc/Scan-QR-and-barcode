@@ -69,4 +69,11 @@ function showBarcode(text) {
 function flashHighlight(element) {
     element.classList.add("highlight");
     setTimeout(() => element.classList.remove("highlight"), 1000);
+    
+    setTimeout(() => {
+    startCamera();
+}, 1000);
 }
+
+// ngủ 1 giây để tránh lỗi
+
